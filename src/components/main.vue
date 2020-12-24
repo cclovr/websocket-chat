@@ -89,7 +89,6 @@ export default {
 
       this.connection.onmessage = function (event) {
         this.users.push(JSON.parse(event.data))
-        // console.log('onmessage', this.users)
       }
 
       this.connection.onopen = function (event) {
