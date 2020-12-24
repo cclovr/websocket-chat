@@ -1,0 +1,35 @@
+.btn-circle
+  background: #747bff
+  padding: 11px 15px
+  border-radius: 20px
+  border: none
+  outline: none
+  width: 100%
+  font-size: 18px
+  color: white
+  transition: .2s
+  margin-top: 9px
+  &:hover
+    box-shadow: 3px 3px 8px 0px rgba(0, 0, 0, 0.20)
+    transition: .2s
+  &:disabled
+    color: rgba(255, 255, 255, 0.50)
+    background: #656ce4
+    &:hover
+      box-shadow: none
+
+.block
+  width: 50%
+  z-index: 1
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  padding: 0 30px
+  background: rgba(78, 84, 200, .7)
+  box-shadow: 3px 3px 8px 0px rgba(0, 0, 0, 0.2)
+  position: relative
+  transition: .3s
+  &.full-width
+    width: 100%
+    transition: .3s
