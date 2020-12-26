@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <Main v-if="!openChat"></Main>
-    <Chat v-if="openChat"></Chat>
+    <Main v-if="!$store.state.isOpenChat && !openChat"></Main>
+    <Chat v-else></Chat>
     <Networks></Networks>
     <Background></Background>
   </div>
@@ -12,13 +12,12 @@ import Main from './components/main.vue'
 import Networks from './components/networks.vue'
 import Background from './components/background.vue'
 import Chat from './components/chat.vue'
-import {eventBus} from './main'
 
 export default {
   name: 'App',
   data () {
     return {
-      openChat: false
+      openChat: localStorage.getItem('open-chat')
     }
   },
   components: {
@@ -26,16 +25,6 @@ export default {
     Networks,
     Background,
     Chat
-  },
-  mounted () {
-    this.startChat()
-  },
-  methods: {
-    startChat () {
-      eventBus.$on('startChat', data => {
-        this.openChat = data
-      })
-    }
   }
 }
 </script>

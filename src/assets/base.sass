@@ -1,7 +1,24 @@
+// Variables
+\:root
+  --box-shadow: 3px 3px 8px 0px rgba(0, 0, 0, 0.20)
+  --main-blue: #747bff
+  --border-chat: 10px
+  --border-radius: 20px
+  --opacity-white: rgba(255, 255, 255, 0.8)
+  // Variables for message animation
+  --msg-content-height: 26.75em
+  --msg-spacing: 1em
+  --msg1-height: 5.5em
+  --msg2-height: 4em
+  --msg3-height: 2.5em
+  --msg4-height: 2.5em
+  --msg5-height: 4em
+  --msg6-height: 3.25em
+
 .btn-circle
-  background: #747bff
+  background: var(--main-blue)
   padding: 11px 15px
-  border-radius: 20px
+  border-radius: var(--border-radius)
   border: none
   outline: none
   width: 100%
@@ -9,8 +26,10 @@
   color: white
   transition: .2s
   margin-top: 9px
+  &:focus
+    outline: none
   &:hover
-    box-shadow: 3px 3px 8px 0px rgba(0, 0, 0, 0.20)
+    box-shadow: var(--box-shadow)
     transition: .2s
   &:disabled
     color: rgba(255, 255, 255, 0.50)
@@ -33,3 +52,18 @@
   &.full-width
     width: 100%
     transition: .3s
+
+h1
+  color: white
+  font-size: 32px
+  margin-bottom: 10px
+
+.form-input
+  border-radius: var(--border-radius)
+  font-size: 14px
+  padding: 10px 15px
+  border: none
+  outline: none
+  width: 100%
+  &:focus
+    border: none

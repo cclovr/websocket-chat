@@ -14,7 +14,7 @@
                class="form-input"
                placeholder="your username"
                aria-label="Username">
-        <button @click="createUser()" :disabled="!username.length" class="btn-circle">Create user</button>
+        <button @click.prevent="createUser()" :disabled="!username.length" class="btn-circle">Create user</button>
       </form>
       <div class="form-item">
         <span class="label">Select interlocutor</span>
@@ -39,8 +39,6 @@
 
 <script>
 import Arrow from '../components/arrow.vue'
-// import axios from 'axios'
-// import UserService from '../services/userService'
 import {eventBus} from '../main'
 
 export default {
@@ -48,11 +46,21 @@ export default {
   components: {
     Arrow
   },
-  // sockets: {
-  //   connect: function () {
-  //     console.log('socket to notification channel connected')
-  //   }
-  // },
+  sockets: {
+    connect () {
+      // Fired when the socket connects.
+      console.log('1')
+    },
+
+    disconnect () {
+      console.log('2')
+    },
+
+    // Fired when the server sends something on the "messageChannel" channel.
+    messageChannel (data) {
+      console.log('3')
+    }
+  },
   data () {
     return {
       username: '',
@@ -68,7 +76,7 @@ export default {
   },
   methods: {
     startChat () {
-      eventBus.$emit('startChat', true)
+      this.$store.commit('openChat', window.localStorage.setItem('open-chat', true))
     },
     listenFullWidth () {
       eventBus.$on('isFullWidth', data => {
@@ -102,28 +110,14 @@ export default {
 .welcome-text
   width: 100%
   margin-bottom: 20px
-  h1
-    color: white
-    font-size: 32px
-    margin-bottom: 10px
   .description
-    color: rgba(255, 255, 255, 0.8)
+    color: var(--opacity-white)
     font-size: 18px
-
-.form-input
-  border-radius: 20px
-  font-size: 14px
-  padding: 10px 15px
-  border: none
-  outline: none
-  width: 100%
-  &:focus
-    border: none
 
 .label
   font-size: 12px
   margin-bottom: 3px
-  color: rgba(255, 255, 255, 0.8)
+  color: var(--opacity-white)
   display: block
 
 .form-item

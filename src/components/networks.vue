@@ -81,6 +81,9 @@ export default {
       const nodesObj = nodes.map(d => Object.create(d))
       const simulation = d3.forceSimulation(nodesObj)
         .force('link', d3.forceLink(linksObj).id(d => d.id))
+        .force('collide', d3.forceCollide(function () {
+          return 50
+        }))
         .force('center', d3.forceCenter(this.width / 2, this.height / 2))
 
       const svg = d3.select('#network-graph').append('svg')
