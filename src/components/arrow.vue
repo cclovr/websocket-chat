@@ -6,8 +6,6 @@
 </template>
 
 <script>
-import {eventBus} from '../main'
-
 export default {
   name: 'arrow',
   data () {
@@ -18,7 +16,7 @@ export default {
   methods: {
     setFullWidth () {
       this.fullWidth = !this.fullWidth
-      eventBus.$emit('isFullWidth', this.fullWidth)
+      this.$store.commit('setFullWidth', this.fullWidth)
     }
   }
 }

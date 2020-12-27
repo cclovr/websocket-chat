@@ -1,12 +1,12 @@
 <template>
-  <div class="main block" :class="{'full-width': fullWidth}">
+  <div class="main block" :class="{'full-width': $store.state.isFullWidthContent}">
     <Arrow></Arrow>
     <div class="welcome-text">
       <h1>Hello! 👋</h1>
       <p class="description">Sign in and start chat</p>
     </div>
     <div class="form-main">
-      <form class="form-item">
+      <form class="form-item" @submit.prevent="createUser()">
         <label for="username" class="label">Your username</label>
         <input type="text"
                id="username"
@@ -14,7 +14,7 @@
                class="form-input"
                placeholder="your username"
                aria-label="Username">
-        <button @click.prevent="createUser()" :disabled="!username.length" class="btn-circle">Create user</button>
+        <button type="submit" :disabled="!username.length" class="btn-circle">Create user</button>
       </form>
       <div class="form-item">
         <span class="label">Select interlocutor</span>
@@ -24,14 +24,18 @@
             type="button" id="dropdownMenuButton"
             data-bs-toggle="dropdown"
             aria-expanded="false">
-            {{ chosenName ? chosenName : 'Select user'}}
+            {{ interlocutorName ? interlocutorName : 'Select user'}}
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item" href="#" @click="chooseUser('Anna')">Anna</a></li>
-            <li><a class="dropdown-item" href="#" @click="chooseUser('Kate')">Kate</a></li>
+            <li v-for="(user, index) in $store.state.users"
+                :key="index"
+                class="dropdown-item"
+                @click="chooseUser(user.name)">
+              {{user.name}}
+            </li>
           </ul>
         </div>
-        <button @click="startChat()" :disabled="!chosenName" class="btn-circle">Start chat</button>
+        <button @click="startChat()" :disabled="!interlocutorName" class="btn-circle">Start chat</button>
       </div>
     </div>
   </div>
@@ -39,69 +43,54 @@
 
 <script>
 import Arrow from '../components/arrow.vue'
-import {eventBus} from '../main'
 
 export default {
   name: 'HelloWorld',
   components: {
     Arrow
   },
-  sockets: {
-    connect () {
-      // Fired when the socket connects.
-      console.log('1')
-    },
-
-    disconnect () {
-      console.log('2')
-    },
-
-    // Fired when the server sends something on the "messageChannel" channel.
-    messageChannel (data) {
-      console.log('3')
-    }
-  },
   data () {
     return {
       username: '',
-      connection: null,
+      socketAddUser: new WebSocket('ws://localhost:8888/api/listen_connection_users'),
+      socketStartChat: new WebSocket('ws://localhost:8888/api/connect_users_to_chat'),
       users: [],
       fullWidth: false,
-      chosenName: ''
+      interlocutorName: ''
     }
   },
   mounted () {
     this.listenConnectionUsers()
-    this.listenFullWidth()
   },
   methods: {
     startChat () {
       this.$store.commit('openChat', window.localStorage.setItem('open-chat', true))
-    },
-    listenFullWidth () {
-      eventBus.$on('isFullWidth', data => {
-        this.fullWidth = data
-      })
+      this.socketStartChat.send(JSON.stringify({
+        name: this.username,
+        interlocutor: this.interlocutorName
+      }))
     },
     chooseUser (name) {
       this.chosenName = name
     },
     createUser () {
-      this.connection.send(JSON.stringify({name: this.username}))
+      this.socketAddUser.send(JSON.stringify({name: this.username}))
     },
     listenConnectionUsers () {
-      console.log(this.users)
-      // const users = []
-      // this.users = users
-      this.connection = new WebSocket('ws://localhost:8888/api/listen_connection_users')
-
-      this.connection.onmessage = function (event) {
-        this.users.push(JSON.parse(event.data))
+      // For add user
+      this.socketAddUser.onopen = () => {
+        console.log('socket add user connected')
       }
-
-      this.connection.onopen = function (event) {
-        console.log('Successfully connected to the echo websocket server...')
+      this.socketAddUser.onmessage = (event) => {
+        this.$store.commit('addUser', JSON.parse(event.data))
       }
+      // For start chat
+      this.socketStartChat.onopen = () => {
+        console.log('socket start chat connected')
+      }
+      // this.socketStartChat.onmessage = (event) => {
+      //   this.$store.commit('addPairUsers', JSON.parse(event.data))
+      // }
     }
   }
 }
@@ -133,8 +122,13 @@ export default {
     width: 100%
 
 .dropdown-toggle
+  margin: 0
   &.show
     border-radius: 20px 20px 0 0
 .dropdown-menu
   border-radius: 0 0 10px 10px
+  li
+    cursor: pointer
+  a
+    text-decoration: none
 </style>

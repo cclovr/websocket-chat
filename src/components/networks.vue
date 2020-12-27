@@ -1,16 +1,15 @@
 <template>
-  <div class='network-graph' id='network-graph' :class="{'hide': hide}">
+  <div class='network-graph' id='network-graph' :class="{'hide': $store.state.isFullWidthContent}">
   </div>
 </template>
 
 <script>
 import * as d3 from 'd3'
-import {eventBus} from '../main'
-
 export default {
   name: 'networks',
   data () {
     return {
+      nodes: this.$store.state.users,
       connection: null,
       loadData: {},
       width: 750,
@@ -22,65 +21,23 @@ export default {
         bottom: 50
       },
       links: [],
-      hide: false,
-      color: null
     }
   },
   mounted () {
-    this.hideNetworks()
     this.init()
   },
   methods: {
-    hideNetworks () {
-      eventBus.$on('isFullWidth', data => {
-        this.hide = data
-      })
-    },
     init () {
-      const nodes = [
-        {
-          x: 0,
-          y: this.height / 4,
-          id: 'Andrew'
-        },
-        {
-          x: 20,
-          y: this.height / 4,
-          id: 'Stark'
-        },
-        {
-          x: 90,
-          y: this.height / 2,
-          id: 'Lannister'
-        },
-        {
-          x: 40,
-          y: this.height / 8,
-          id: 'Anna'
-        }
-      ]
       const links = [
-        {
-          source: 'Andrew',
-          target: 'Anna'
-        },
-        {
-          source: 'Andrew',
-          target: 'Stark'
-        },
-        {
-          source: 'Lannister',
-          target: 'Stark'
-        },
         {
           source: 'Anna',
           target: 'Lannister'
         }
       ]
-      const linksObj = links.map(d => Object.create(d))
+      // const linksObj = links.map(d => Object.create(d))
       const nodesObj = nodes.map(d => Object.create(d))
       const simulation = d3.forceSimulation(nodesObj)
-        .force('link', d3.forceLink(linksObj).id(d => d.id))
+        .force('link', d3.forceLink(linksObj).id(d => d.name))
         .force('collide', d3.forceCollide(function () {
           return 50
         }))
@@ -115,6 +72,7 @@ export default {
             .attr('y1', d => d.source.y)
             .attr('x2', d => d.target.x)
             .attr('y2', d => d.target.y)
+
           node
             .attr('cx', d => d.x)
             .attr('cy', d => d.y)

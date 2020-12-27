@@ -5,6 +5,7 @@ import tornado.websocket
 import tornado.escape
 import tornado.auth
 import logging
+import socketio
 from tornado.options import define, options
 
 activeUsers = []
@@ -20,18 +21,6 @@ class BaseHandler(tornado.web.RequestHandler):
   def options(self, *args, **kwargs):
     self.set_header('Access-Control-Allow-Headers', '*')
     self.set_header('Access-Control-Allow-Methods', '*')
-
-
-class RandomHandler(BaseHandler):
-    def get(self):
-        self.write({'randomNumber': '111111'})
-
-
-# class LoginHandler(BaseHandler):
-#     def post(self):
-#         username = tornado.escape.json_decode(self.request.body)
-#         activeUsers.append(username)
-
 
 class ConnectionUsersWebsocket(BaseHandler, tornado.websocket.WebSocketHandler):
     waiters = set()

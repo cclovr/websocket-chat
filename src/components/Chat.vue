@@ -1,5 +1,5 @@
 <template>
-    <div class="chat block" :class="{'full-width': fullWidth}">
+    <div class="chat block" :class="{'full-width': $store.state.isFullWidthContent}">
       <Arrow></Arrow>
       <div class="chat-wrap">
         <h1>Chat</h1>
@@ -20,7 +20,11 @@
           </div>
           <div class="chat-main">
             <div class="interlocutor-message">Lorem ipsum dolor sit amet.</div>
-            <div class="my-message">Lorem ipsum dolor sit amet.</div>
+            <div class="my-message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequatur facere fugiat laboriosam, minima nesciunt nihil pariatur possimus ratione sequi?</div>
+            <div class="my-message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequatur facere fugiat laboriosam, minima nesciunt nihil pariatur possimus ratione sequi?</div>
+            <div class="interlocutor-message">Lorem ipsum dolor sit amet.</div>
+            <div class="interlocutor-message">Lorem ipsum dolor sit amet.</div>
+            <div class="my-message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequatur facere fugiat laboriosam, minima nesciunt nihil pariatur possimus ratione sequi?</div>
           </div>
         </div>
       </div>
@@ -29,32 +33,19 @@
 
 <script>
 import Arrow from '../components/arrow.vue'
-import {eventBus} from '../main'
 export default {
   name: 'Chat',
   components: {
     Arrow
-  },
-  data () {
-    return {
-      fullWidth: false
-    }
-  },
-  mounted () {
-    this.listenFullWidth()
-  },
-  methods: {
-    listenFullWidth () {
-      eventBus.$on('isFullWidth', data => {
-        this.fullWidth = data
-      })
-    }
   }
 }
 </script>
 
 <style scoped lang="sass">
 .chat
+  &.full-width
+    .chat-item
+      max-width: 230px
   &-container
     display: flex
     background: var(--opacity-white)
@@ -73,13 +64,8 @@ export default {
     padding: 10px 20px
     width: 100%
     margin-bottom: 10px
-    max-width: 230px
+    max-width: 100px
     cursor: pointer
-    /*position: absolute*/
-    /*animation-iteration-count: 1*/
-    /*animation-duration: 8s*/
-    /*animation-fill-mode: forwards*/
-    /*animation-name: msg*/
     &:last-child
       margin-bottom: 0
     .description
@@ -96,36 +82,35 @@ export default {
     border-radius: var(--border-chat)
     padding: 10px 20px
     position: relative
+    overflow: auto
+    &::-webkit-scrollbar
+      width: 7px
+      background-color: #f9f9fd
+    &::-webkit-scrollbar-thumb
+      background-color: #b3b3b3
+      border-radius: 5px
+
+  .interlocutor-message,
+  .my-message
+    animation: msg 1s
+    padding: 15px
+    border-radius: 10px
+    display: inline-block
+    margin-bottom: 10px
+    max-width: 400px
+
+  .interlocutor-message
+    background: #c5dcff
+    float: left
+
+  .my-message
+    background: #ebebeb
+    float: right
 
 // Animation message
-  <!--@keyframes msg1-->
-  <!--  0%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height))-->
-  <!--    left: -4em-->
-  <!--    transform: scale(0)-->
-  <!--  5%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height))-->
-  <!--    left:-->
-  <!--    transform: scale(1)-->
-  <!--  12%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height))-->
-  <!--  17%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg2-height))-->
-  <!--  30%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg2-height))-->
-  <!--  35%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg2-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg3-height))-->
-  <!--  49%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg2-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg3-height))-->
-  <!--  54%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg2-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg3-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg4-height))-->
-  <!--  70%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg2-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg3-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg4-height))-->
-  <!--  75%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg2-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg3-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg4-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg5-height))-->
-  <!--  95%-->
-  <!--    top: calc(var(&#45;&#45;msg-content-height) - var(&#45;&#45;msg1-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg2-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg3-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg4-height) - var(&#45;&#45;msg-spacing) - var(&#45;&#45;msg5-height))-->
-  <!--  100%-->
-  <!--    top: 0-->
-  <!--    left: 0-->
+@keyframes msg
+  0%
+    opacity: 0
+  100%
+    opacity: 1
 </style>
