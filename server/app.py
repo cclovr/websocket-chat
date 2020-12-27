@@ -11,9 +11,9 @@ def make_app(bundle_path, debug):
       static_path=os.path.join(os.path.dirname(__file__), "public"),
       debug=debug,
       handlers=[
-        (r"/api/listen_connection_users", handlers.ConnectionUsersWebsocket)
+        (r"/api/listen_connection_users", handlers.ConnectionUsersWebsocket),
         (r"/api/connect_users_to_chat", handlers.ConnectUsersToChatWebsocket)
-      ],
+      ]
     )
 
 

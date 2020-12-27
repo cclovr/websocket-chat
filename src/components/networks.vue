@@ -10,17 +10,14 @@ export default {
   data () {
     return {
       nodes: this.$store.state.users,
-      connection: null,
-      loadData: {},
+      links: this.$store.state.usersPair,
       width: 750,
-      height: 400,
-      margin: {
-        top: 50,
-        right: 50,
-        left: 50,
-        bottom: 50
-      },
-      links: [],
+      height: 400
+    }
+  },
+  watch: {
+    nodes () {
+      this.init()
     }
   },
   mounted () {
@@ -28,16 +25,10 @@ export default {
   },
   methods: {
     init () {
-      const links = [
-        {
-          source: 'Anna',
-          target: 'Lannister'
-        }
-      ]
-      // const linksObj = links.map(d => Object.create(d))
-      const nodesObj = nodes.map(d => Object.create(d))
+      const linksObj = this.links.map(d => Object.create(d))
+      const nodesObj = this.nodes.map(d => Object.create(d))
       const simulation = d3.forceSimulation(nodesObj)
-        .force('link', d3.forceLink(linksObj).id(d => d.name))
+        .force('link', d3.forceLink(linksObj).id(d => d.id))
         .force('collide', d3.forceCollide(function () {
           return 50
         }))

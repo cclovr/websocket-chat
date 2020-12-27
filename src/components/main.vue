@@ -30,8 +30,8 @@
             <li v-for="(user, index) in $store.state.users"
                 :key="index"
                 class="dropdown-item"
-                @click="chooseUser(user.name)">
-              {{user.name}}
+                @click="chooseUser(user.id)">
+              {{user.id}}
             </li>
           </ul>
         </div>
@@ -63,19 +63,6 @@ export default {
     this.listenConnectionUsers()
   },
   methods: {
-    startChat () {
-      this.$store.commit('openChat', window.localStorage.setItem('open-chat', true))
-      this.socketStartChat.send(JSON.stringify({
-        name: this.username,
-        interlocutor: this.interlocutorName
-      }))
-    },
-    chooseUser (name) {
-      this.chosenName = name
-    },
-    createUser () {
-      this.socketAddUser.send(JSON.stringify({name: this.username}))
-    },
     listenConnectionUsers () {
       // For add user
       this.socketAddUser.onopen = () => {
@@ -88,9 +75,22 @@ export default {
       this.socketStartChat.onopen = () => {
         console.log('socket start chat connected')
       }
-      // this.socketStartChat.onmessage = (event) => {
-      //   this.$store.commit('addPairUsers', JSON.parse(event.data))
-      // }
+      this.socketStartChat.onmessage = (event) => {
+        this.$store.commit('addPairUsers', JSON.parse(event.data))
+      }
+    },
+    startChat () {
+      this.$store.commit('openChat', window.localStorage.setItem('open-chat', true))
+      this.socketStartChat.send(JSON.stringify({
+        source: this.id,
+        target: this.interlocutorName
+      }))
+    },
+    chooseUser (name) {
+      this.interlocutorName = name
+    },
+    createUser () {
+      this.socketAddUser.send(JSON.stringify({id: this.username}))
     }
   }
 }
