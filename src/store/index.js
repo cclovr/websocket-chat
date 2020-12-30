@@ -6,7 +6,7 @@ Vue.use(Vuex)
 const state = {
   isOpenChat: false,
   isFullWidthContent: false,
-  users: [],
+  user: {},
   usersPair: []
 }
 
@@ -18,7 +18,7 @@ const mutations = {
     state.isFullWidthContent = stateWidth
   },
   addUser (state, user) {
-    state.users.push(user)
+    Vue.set(state, 'user', user)
   },
   addPairUsers (state, pair) {
     state.usersPair.push(pair)

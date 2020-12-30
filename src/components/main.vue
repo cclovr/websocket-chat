@@ -27,7 +27,7 @@
             {{ interlocutorName ? interlocutorName : 'Select user'}}
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li v-for="(user, index) in $store.state.users"
+            <li v-for="(user, index) in users"
                 :key="index"
                 class="dropdown-item"
                 @click="chooseUser(user.id)">
@@ -70,6 +70,7 @@ export default {
       }
       this.socketAddUser.onmessage = (event) => {
         this.$store.commit('addUser', JSON.parse(event.data))
+        this.users.push(JSON.parse(event.data))
       }
       // For start chat
       this.socketStartChat.onopen = () => {
