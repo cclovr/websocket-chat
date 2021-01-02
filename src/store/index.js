@@ -7,7 +7,7 @@ const state = {
   isOpenChat: false,
   isFullWidthContent: false,
   user: {},
-  usersPair: []
+  usersPair: {}
 }
 
 const mutations = {
@@ -19,9 +19,11 @@ const mutations = {
   },
   addUser (state, user) {
     Vue.set(state, 'user', user)
+    console.log(state.user)
   },
   addPairUsers (state, pair) {
-    state.usersPair.push(pair)
+    Vue.set(state, 'usersPair', pair)
+    console.log(state.usersPair)
   }
 }
 

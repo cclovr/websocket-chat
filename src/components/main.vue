@@ -83,8 +83,8 @@ export default {
     startChat () {
       this.$store.commit('openChat', window.localStorage.setItem('open-chat', true))
       this.socketStartChat.send(JSON.stringify({
-        source: this.id,
-        target: this.interlocutorName
+        sit: this.id,
+        tid: this.interlocutorName
       }))
     },
     chooseUser (name) {

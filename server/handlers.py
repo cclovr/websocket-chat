@@ -42,9 +42,11 @@ class OptionsWebsocket(BaseHandler, tornado.websocket.WebSocketHandler):
 
 class ConnectionUsersWebsocket(OptionsWebsocket):
     def on_message(self, message):
+        print(tornado.escape.json_decode(message))
         self.write_message(message=tornado.escape.json_decode(message))
 
 
 class ConnectUsersToChatWebsocket(OptionsWebsocket):
     def on_message(self, message):
+        print(tornado.escape.json_decode(message))
         self.write_message(message=tornado.escape.json_decode(message))
