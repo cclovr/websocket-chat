@@ -19,11 +19,9 @@ const mutations = {
   },
   addUser (state, user) {
     Vue.set(state, 'user', user)
-    console.log(state.user)
   },
   addPairUsers (state, pair) {
     Vue.set(state, 'usersPair', pair)
-    console.log(state.usersPair)
   }
 }
 

@@ -53,7 +53,7 @@ export default {
     return {
       username: '',
       socketAddUser: new WebSocket('ws://localhost:8888/api/listen_connection_users'),
-      socketStartChat: new WebSocket('ws://localhost:8888/api/connect_users_to_chat'),
+      // socketStartChat: new WebSocket('ws://localhost:8888/api/connect_users_to_chat'),
       users: [],
       fullWidth: false,
       interlocutorName: ''
@@ -73,12 +73,12 @@ export default {
         this.users.push(JSON.parse(event.data))
       }
       // For start chat
-      this.socketStartChat.onopen = () => {
-        console.log('socket start chat connected')
-      }
-      this.socketStartChat.onmessage = (event) => {
-        this.$store.commit('addPairUsers', JSON.parse(event.data))
-      }
+      // this.socketStartChat.onopen = () => {
+      //   console.log('socket start chat connected')
+      // }
+      // this.socketStartChat.onmessage = (event) => {
+      //   this.$store.commit('addPairUsers', JSON.parse(event.data))
+      // }
     },
     startChat () {
       this.$store.commit('openChat', window.localStorage.setItem('open-chat', true))

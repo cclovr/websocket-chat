@@ -25,28 +25,62 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class OptionsWebsocket(BaseHandler, tornado.websocket.WebSocketHandler):
-    waiters = set()
-
     def get_compression_options(self):
         return {}
 
     def check_origin(self, origin):
         return True
 
-    def open(self):
-        OptionsWebsocket.waiters.add(self)
-
-    def on_close(self):
-        OptionsWebsocket.waiters.remove(self)
-
 
 class ConnectionUsersWebsocket(OptionsWebsocket):
+    waitersNode = set()
+    cache = []
+    cache_size = 200
+
+    def open(self):
+        ConnectionUsersWebsocket.waitersNode.add(self)
+
+    def on_close(self):
+        ConnectionUsersWebsocket.waitersNode.remove(self)
+
+    @classmethod
+    def update_cache(cls, chat):
+        cls.cache.append(chat)
+        if len(cls.cache) > cls.cache_size:
+            cls.cache = cls.cache[-cls.cache_size:]
+
+    @classmethod
+    def send_updates(cls, chat):
+        logging.info("sending message to %d waiters", len(cls.waitersNode))
+        for waiter in cls.waitersNode:
+            try:
+                waiter.write_message(chat)
+            except:
+                logging.error("Error sending message", exc_info=True)
+
     def on_message(self, message):
-        print(tornado.escape.json_decode(message))
-        self.write_message(message=tornado.escape.json_decode(message))
+        ConnectionUsersWebsocket.update_cache(message)
+        ConnectionUsersWebsocket.send_updates(message)
 
 
 class ConnectUsersToChatWebsocket(OptionsWebsocket):
-    def on_message(self, message):
-        print(tornado.escape.json_decode(message))
-        self.write_message(message=tornado.escape.json_decode(message))
+    waiters = set()
+    cache = []
+    cache_size = 200
+
+    @classmethod
+    def update_cache(cls, chat):
+        cls.cache.append(chat)
+        if len(cls.cache) > cls.cache_size:
+            cls.cache = cls.cache[-cls.cache_size:]
+
+    @classmethod
+    def send_updates(cls, chat):
+        logging.info("sending message to %d waiters", len(cls.waiters))
+        for waiter in cls.waiters:
+            try:
+                waiter.write_message(chat)
+                ChatSocketHandler.update_cache(chat)
+                ChatSocketHandler.send_updates(chat)
+            except:
+                logging.error("Error sending message", exc_info=True)

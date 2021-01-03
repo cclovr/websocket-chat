@@ -12,7 +12,7 @@ def make_app(bundle_path, debug):
       debug=debug,
       handlers=[
         (r"/api/listen_connection_users", handlers.ConnectionUsersWebsocket),
-        (r"/api/connect_users_to_chat", handlers.ConnectUsersToChatWebsocket)
+        # (r"/api/connect_users_to_chat", handlers.ConnectUsersToChatWebsocket)
       ]
     )
 
