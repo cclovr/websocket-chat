@@ -4,28 +4,23 @@
       <div class="chat-wrap">
         <h1>Chat</h1>
         <div class="chat-container">
-          <div class="chat-items-wrap">
-            <div class="chat-item">
-              <span class="name">Lorem</span>
-              <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus blanditiis deleniti distinctio eius excepturi, iure numquam quasi ut voluptas voluptatibus?</p>
-            </div>
-            <div class="chat-item">
-              <span class="name">Lorem ipsum.</span>
-              <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus blanditiis deleniti distinctio eius excepturi, iure numquam quasi ut voluptas voluptatibus?</p>
-            </div>
-            <div class="chat-item">
-              <span class="name">Lorem ipsum.</span>
-              <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus blanditiis deleniti distinctio eius excepturi, iure numquam quasi ut voluptas voluptatibus?</p>
-            </div>
+          <div class="chat-head">
+            <span class="name">{{ username }}</span>
           </div>
           <div class="chat-main">
-            <div class="interlocutor-message">Lorem ipsum dolor sit amet.</div>
-            <div class="my-message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequatur facere fugiat laboriosam, minima nesciunt nihil pariatur possimus ratione sequi?</div>
-            <div class="my-message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequatur facere fugiat laboriosam, minima nesciunt nihil pariatur possimus ratione sequi?</div>
-            <div class="interlocutor-message">Lorem ipsum dolor sit amet.</div>
-            <div class="interlocutor-message">Lorem ipsum dolor sit amet.</div>
-            <div class="my-message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequatur facere fugiat laboriosam, minima nesciunt nihil pariatur possimus ratione sequi?</div>
+            <div class="interlocutor-message"
+                 v-for="(message, index) in messages"
+                 :key="index"
+            >
+             {{ message.message }}
+            </div>
           </div>
+          <form class="input-wrapper" @submit.prevent="sendMessage()">
+            <input type="text" class="form-input" placeholder="type message" v-model="message">
+            <button type="submit" class="btn-send-message">
+              <img src="../assets/send_message.svg" alt="send_message">
+            </button>
+          </form>
         </div>
       </div>
     </div>
@@ -33,10 +28,37 @@
 
 <script>
 import Arrow from '../components/arrow.vue'
+import WS from '../services/ws'
+
 export default {
   name: 'Chat',
   components: {
     Arrow
+  },
+  data () {
+    return {
+      username: window.localStorage.getItem('interlocutor-name'),
+      socket: WS,
+      message: '',
+      messages: []
+    }
+  },
+  mounted () {
+    this.socket.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      if (data.name_option === 'message') {
+        this.message = ''
+        this.messages.push(data)
+      }
+    }
+  },
+  methods: {
+    sendMessage () {
+      this.socket.send(JSON.stringify({
+        name_option: 'message',
+        message: this.message
+      }))
+    }
   }
 }
 </script>
@@ -53,6 +75,7 @@ export default {
     border-radius: var(--border-radius)
     box-shadow: var(--box-shadow)
     padding: 10px
+    position: relative
   &-wrap
     height: 100%
     padding: 20px 0
@@ -77,12 +100,14 @@ export default {
       font-weight: bold
   &-main
     width: 100%
-    margin-left: 20px
     background: white
-    border-radius: var(--border-chat)
-    padding: 10px 20px
+    padding: 10px 10px 0
     position: relative
     overflow: auto
+    display: flex
+    flex-direction: column
+    height: calc(100% - 100px)
+    margin-top: 52px
     &::-webkit-scrollbar
       width: 7px
       background-color: #f9f9fd
@@ -92,7 +117,7 @@ export default {
 
   .interlocutor-message,
   .my-message
-    animation: msg 1s
+    animation: msg .5s
     padding: 15px
     border-radius: 10px
     display: inline-block
@@ -101,11 +126,46 @@ export default {
 
   .interlocutor-message
     background: #c5dcff
-    float: left
+    align-self: baseline
 
   .my-message
     background: #ebebeb
-    float: right
+    align-self: flex-end
+
+  .chat-head
+    position: absolute
+    z-index: 2
+    background: white
+    padding: 15px
+    width: 100%
+    left: 0
+    top: 0
+    font-size: 20px
+    font-weight: bold
+    text-transform: capitalize
+    border-radius: 15px 15px 0 0
+    box-shadow: var(--box-shadow)
+
+  .input-wrapper
+    z-index: 2
+    bottom: 0
+    position: absolute
+    background: #ebebeb
+    width: 100%
+    left: 0
+    border-radius: 0 0 15px 15px
+    padding: 10px 10px
+    box-shadow: var(--box-shadow)
+
+  .btn-send-message
+    position: absolute
+    width: 33px
+    border: none
+    outline: none
+    height: 33px
+    border-radius: 50%
+    right: 15px
+    top: 14px
 
 // Animation message
 @keyframes msg

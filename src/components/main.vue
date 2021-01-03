@@ -43,6 +43,7 @@
 
 <script>
 import Arrow from '../components/arrow.vue'
+import WS from '../services/ws'
 
 export default {
   name: 'HelloWorld',
@@ -52,8 +53,7 @@ export default {
   data () {
     return {
       username: '',
-      socketAddUser: new WebSocket('ws://localhost:8888/api/listen_connection_users'),
-      // socketStartChat: new WebSocket('ws://localhost:8888/api/connect_users_to_chat'),
+      socket: WS,
       users: [],
       fullWidth: false,
       interlocutorName: ''
@@ -64,34 +64,37 @@ export default {
   },
   methods: {
     listenConnectionUsers () {
-      // For add user
-      this.socketAddUser.onopen = () => {
+      this.socket.onopen = () => {
         console.log('socket add user connected')
       }
-      this.socketAddUser.onmessage = (event) => {
-        this.$store.commit('addUser', JSON.parse(event.data))
-        this.users.push(JSON.parse(event.data))
+      this.socket.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        if (data.name_option === 'add-user') {
+          this.$store.commit('addUser', data)
+          this.users.push(data)
+        } else {
+          console.log(data)
+          this.$store.commit('openChat', window.localStorage.setItem('open-chat', true))
+          this.$store.commit('addPairUsers', data)
+          window.localStorage.setItem('interlocutor-name', this.$store.state.usersPair.sid)
+        }
       }
-      // For start chat
-      // this.socketStartChat.onopen = () => {
-      //   console.log('socket start chat connected')
-      // }
-      // this.socketStartChat.onmessage = (event) => {
-      //   this.$store.commit('addPairUsers', JSON.parse(event.data))
-      // }
     },
     startChat () {
-      this.$store.commit('openChat', window.localStorage.setItem('open-chat', true))
-      this.socketStartChat.send(JSON.stringify({
-        sit: this.id,
-        tid: this.interlocutorName
+      this.socket.send(JSON.stringify({
+        sid: this.username,
+        tid: this.interlocutorName,
+        name_option: 'start-chat'
       }))
     },
     chooseUser (name) {
       this.interlocutorName = name
     },
     createUser () {
-      this.socketAddUser.send(JSON.stringify({id: this.username}))
+      this.socket.send(JSON.stringify({
+        id: this.username,
+        name_option: 'add-user'
+      }))
     }
   }
 }
