@@ -103,6 +103,7 @@ export default {
     createUser () {
       this.socket.send(JSON.stringify({
         id: this.username,
+        name: this.username,
         name_option: 'add-user'
       }))
     }

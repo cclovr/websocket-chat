@@ -5,7 +5,7 @@
         <h1>Chat</h1>
         <div class="chat-container">
           <div class="chat-head">
-            <span class="name">{{ username.id }}</span>
+            <span class="name">{{ username }}</span>
           </div>
           <div class="chat-main">
             <div class="interlocutor-message"
@@ -38,7 +38,7 @@ export default {
   },
   data () {
     return {
-      username: '',
+      username: window.localStorage.getItem('interlocutor-name'),
       socket: WS,
       message: '',
       messages: [],
@@ -53,9 +53,11 @@ export default {
         this.messages.push(data)
       }
       if (data.name_option === 'all-users') {
-        this.username = data.users.filter(el => {
+        const username = data.users.filter(el => {
           return el.id !== this.myUsername
         })[0]
+        console.log(username)
+        window.localStorage.setItem('interlocutor-name', username)
       }
     }
   },
