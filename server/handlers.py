@@ -8,8 +8,6 @@ import logging
 import socketio
 from tornado.options import define, options
 
-activeUsers = []
-print('1', activeUsers)
 
 
 class BaseHandler(tornado.web.RequestHandler):

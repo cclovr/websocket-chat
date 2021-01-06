@@ -5,12 +5,13 @@
         <h1>Chat</h1>
         <div class="chat-container">
           <div class="chat-head">
-            <span class="name">{{ username }}</span>
+            <span class="name">{{ username.id }}</span>
           </div>
           <div class="chat-main">
             <div class="interlocutor-message"
                  v-for="(message, index) in messages"
                  :key="index"
+                 :class="{'my-message': message.id === myUsername}"
             >
              {{ message.message }}
             </div>
@@ -37,10 +38,11 @@ export default {
   },
   data () {
     return {
-      username: window.localStorage.getItem('interlocutor-name'),
+      username: '',
       socket: WS,
       message: '',
-      messages: []
+      messages: [],
+      myUsername: window.localStorage.getItem('username')
     }
   },
   mounted () {
@@ -50,13 +52,19 @@ export default {
         this.message = ''
         this.messages.push(data)
       }
+      if (data.name_option === 'all-users') {
+        this.username = data.users.filter(el => {
+          return el.id !== this.myUsername
+        })[0]
+      }
     }
   },
   methods: {
     sendMessage () {
       this.socket.send(JSON.stringify({
         name_option: 'message',
-        message: this.message
+        message: this.message,
+        id: this.myUsername
       }))
     }
   }
@@ -129,8 +137,8 @@ export default {
     align-self: baseline
 
   .my-message
-    background: #ebebeb
-    align-self: flex-end
+    background: #ebebeb!important
+    align-self: flex-end!important
 
   .chat-head
     position: absolute

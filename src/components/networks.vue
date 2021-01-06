@@ -53,9 +53,6 @@ export default {
   &.hide
     width: 0
     transition: .3s
-    display: none
-  svg
-    width: 100%
 
 path.link
   stroke: red!important

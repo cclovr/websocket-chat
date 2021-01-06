@@ -73,10 +73,9 @@ export default {
           this.$store.commit('addUser', data)
           this.users.push(data)
         } else {
-          console.log(data)
           this.$store.commit('openChat', window.localStorage.setItem('open-chat', true))
           this.$store.commit('addPairUsers', data)
-          window.localStorage.setItem('interlocutor-name', this.$store.state.usersPair.sid)
+          window.localStorage.setItem('username', this.username)
         }
       }
     },
@@ -85,6 +84,17 @@ export default {
         sid: this.username,
         tid: this.interlocutorName,
         name_option: 'start-chat'
+      }))
+      this.socket.send(JSON.stringify({
+        users: [
+          {
+            id: this.username
+          },
+          {
+            id: this.interlocutorName
+          }
+        ],
+        name_option: 'all-users'
       }))
     },
     chooseUser (name) {
