@@ -57,7 +57,8 @@ export default {
           return el.id !== this.myUsername
         })[0]
         console.log(username)
-        window.localStorage.setItem('interlocutor-name', username)
+        this.username = username.id
+        window.localStorage.setItem('interlocutor-name', username.id)
       }
     }
   },

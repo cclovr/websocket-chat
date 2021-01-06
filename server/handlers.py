@@ -9,20 +9,7 @@ import socketio
 from tornado.options import define, options
 
 
-
-class BaseHandler(tornado.web.RequestHandler):
-    def set_default_headers(self, *args, **kwargs):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-        self.set_header("Access-Control-Allow-Headers",
-                        "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
-
-    def options(self, *args, **kwargs):
-        self.set_header('Access-Control-Allow-Headers', '*')
-        self.set_header('Access-Control-Allow-Methods', '*')
-
-
-class OptionsWebsocket(BaseHandler, tornado.websocket.WebSocketHandler):
+class OptionsWebsocket(tornado.websocket.WebSocketHandler):
     def get_compression_options(self):
         return {}
 
